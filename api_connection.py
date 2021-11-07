@@ -1,4 +1,3 @@
-import json
 import math
 
 import requests
@@ -26,11 +25,11 @@ class APIConnection():
 
     def _make_post_request(self, payload):
         r = requests.post(self.api_url, json=payload, headers=self.headers)
-        return r.json
+        return r.json()
 
-    def get_all_data(self):
+    def get_all_data(self) -> pd.DataFrame:
         count_per_page = 100
-        payload = {
+        initial_payload = {
             "region":7,
             "versus":"players",
             "matchType":"unranked",
@@ -40,11 +39,19 @@ class APIConnection():
             "count":str(count_per_page)
             }
 
-        first_request = self._make_post_request(payload)
+        first_request = self._make_post_request(initial_payload)
         total_players = first_request['count']
         total_pages = math.ceil(total_players/count_per_page)
 
         df_results = pd.DataFrame(data=first_request['items'])
+
+        for page_num in range(1, total_pages+1):
+            payload = initial_payload.copy()
+            payload['page'] = str(page_num)
+            data_json = self._make_post_request(payload)
+            df_page = pd.DataFrame(data=data_json['items'])
+
+            df_results = pd.concat([df_results, df_page], ignore_index=True)
 
         return df_results
 
@@ -59,23 +66,6 @@ def make_post_request(payload, headers):
 
 if __name__ == "__main__":
 
-    count_per_page = 100
-
-    payload = {
-        "region":7,
-        "versus":"players",
-        "matchType":"unranked",
-        "teamSize":"1v1",
-        "searchPlayer":"",
-        "page":"1",
-        "count":str(count_per_page)
-        }
-
-    headers = {"content-type":"application/json",
-            "Accept" : "application/json"
-            }
-
-    data, status = make_post_request(payload, headers)
-
-    total_players = data['count']
-    total_pages = math.ceil(total_players / count_per_page)
+    aoe4_connection = APIConnection()
+    results = aoe4_connection.get_all_data()
+    print(results.tail())

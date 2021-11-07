@@ -60,15 +60,6 @@ class APIConnection:
         return df_results
 
 
-def make_post_request(payload, headers):
-    """Makes a post request to the aoe 4 ladder api"""
-
-    api_url = "https://api.ageofempires.com/api/ageiv/Leaderboard"
-
-    r = requests.post(api_url, json=payload, headers=headers)
-    return r.json(), r.status_code
-
-
 if __name__ == "__main__":
     # This probably could be different
     aoe4_connection = APIConnection()

@@ -1,2 +1,4 @@
 age_4_elo_curve_env/
+__pycache__/
 aoe4elo.db
+.vscode/

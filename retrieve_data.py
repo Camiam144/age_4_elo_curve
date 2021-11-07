@@ -5,6 +5,7 @@ from datetime import datetime
 
 from api_connection import APIConnection
 
+
 def main():
     aoe4_api_conn = APIConnection()
     data = aoe4_api_conn.get_all_data()
@@ -19,4 +20,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()   
+    main()

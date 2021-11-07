@@ -58,7 +58,7 @@ class APIConnection:
             df_results = pd.concat([df_results, df_page], ignore_index=True)
 
         # For some reason there are duplicates, maybe games finish as I'm pulling data?
-        df_results = df_results.drop_duplicates(subset=['rlUserId'], ignore_index=True)
+        df_results = df_results.drop_duplicates(subset=["rlUserId"], ignore_index=True)
         return df_results
 
 

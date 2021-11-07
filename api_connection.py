@@ -49,7 +49,7 @@ class APIConnection:
 
         df_results = pd.DataFrame(data=first_request["items"])
 
-        for page_num in range(1, total_pages + 1):
+        for page_num in range(2, total_pages + 1):
             payload = initial_payload.copy()
             payload["page"] = str(page_num)
             data_json = self._make_post_request(payload)
@@ -57,6 +57,8 @@ class APIConnection:
 
             df_results = pd.concat([df_results, df_page], ignore_index=True)
 
+        # For some reason there are duplicates, maybe games finish as I'm pulling data?
+        df_results = df_results.drop_duplicates(subset=['rlUserId'], ignore_index=True)
         return df_results
 
 

@@ -33,12 +33,16 @@ region_dict = {
     "Middle East": 1,
 }
 
+load_time = st.selectbox(label="Select timestamp", options=data['load_time'].unique())
+
+pre_filtered_data = data.loc[data['load_time'] == load_time, :]
+
 region = st.selectbox(label="Select Region", options=region_dict.keys(), index=0)
 region_code = region_dict[region]
 if region_code != 7:
-    filtered_data = data[data["region"] == region_code]
+    filtered_data = pre_filtered_data[pre_filtered_data["region"] == region_code]
 else:
-    filtered_data = data
+    filtered_data = pre_filtered_data
 
 total_players_in_region = filtered_data.shape[0]
 st.caption(f"Total players in region: {total_players_in_region}")

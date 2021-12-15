@@ -146,3 +146,13 @@ if row.shape[0] > 0:
         fig.add_vline(x=val, line_dash="dash", line_color="purple")
 
 st.plotly_chart(fig)
+
+# Determine the total number of people in each rank:
+st.subheader("Current rank counts")
+
+df_ranks = pd.DataFrame(df_plotting.groupby(['league']).sum()['counts'])
+df_ranks['Percentage'] = (df_ranks['counts'] / df_ranks['counts'].sum()) * 100
+df_ranks = df_ranks.reindex(["bronze", "silver", "gold", "platinum", "diamond","master"])
+
+
+st.table(df_ranks.style.format(formatter={'Percentage' : "{:.2f}%"}))

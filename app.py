@@ -33,7 +33,7 @@ region_dict = {
     "Middle East": 1,
 }
 
-load_time = st.selectbox(label="Select timestamp", options=data['load_time'].unique())
+load_time = st.selectbox(label="Select timestamp", options=data['load_time'].unique(), index=len(data['load_time'].unique())-1)
 
 pre_filtered_data = data.loc[data['load_time'] == load_time, :]
 

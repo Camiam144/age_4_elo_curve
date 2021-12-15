@@ -85,13 +85,60 @@ df_plotting["cum_sum"] = df_plotting["counts"].cumsum()
 df_plotting["cum_frac"] = df_plotting["cum_sum"] / (df_plotting["counts"].sum())
 df_plotting["cum_percent"] = df_plotting["cum_frac"] * 100
 
+# Colorcode the bars by league
+upper_cutoff_dict = {
+    "bronze" : 0.08,
+    "silver" : 0.28,
+    "gold" : 0.60,
+    "platinum" : 0.80,
+    "diamond" : 0.98,
+    "master" : 1.00
+}
+
+def get_league(value, league_dict):
+    if value <= league_dict['bronze'] : return "bronze"
+    elif league_dict['bronze'] < value <= league_dict["silver"] : return "silver"
+    elif league_dict["silver"] < value <= league_dict["gold"] : return "gold"
+    elif league_dict["gold"] < value <= league_dict["platinum"] : return "platinum"
+    elif league_dict["platinum"] < value <= league_dict["diamond"] : return "diamond"
+    elif league_dict["diamond"] < value <= league_dict["master"] : return "master"
+    else: return "no league found"
+
+df_plotting["league"] = df_plotting["cum_frac"].apply(get_league, args=(upper_cutoff_dict,))
+
+color_dict = {
+    "bronze" : px.colors.qualitative.Dark2[6],
+    "silver" : px.colors.qualitative.Dark2[7],
+    "gold" : px.colors.qualitative.T10[5],
+    "platinum" : px.colors.qualitative.Set2[7],
+    "diamond" : px.colors.qualitative.Set3[4],
+    "master" : px.colors.qualitative.G10[0]
+}
+
+df_plotting["bar_color"] = df_plotting['league'].apply(lambda x: color_dict[x])
+
 fig = px.bar(
-    df_plotting, x="bins", y="counts", custom_data=["bin_label", "cum_percent"]
+    df_plotting, x="bins", y="counts",
+    custom_data=["bin_label", "cum_percent", "league"],
+    color='league',
+    color_discrete_map=color_dict,
+    labels={
+        "bins" : "Elo",
+        "counts" : "Number of Players"
+    }
 )
+
 fig.update_traces(
-    hovertemplate="""Players: %{y} <br>Elo: %{customdata[0]} <br>Percentile = %{customdata[1]:.2f}%"""
+    hovertemplate="""Players: %{y} <br>Elo: %{customdata[0]} <br>Percentile = %{customdata[1]:.2f}% <br>League = %{customdata[2]}""",
 )
-fig.update_layout(bargap=0.05)
+
+fig.update_layout(
+    bargap=0.05
+)
+
+fig.update_xaxes(
+    dtick=100
+)
 
 if row.shape[0] > 0:
     line_x_values = row["elo"].to_numpy()

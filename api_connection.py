@@ -1,6 +1,7 @@
 """ This module holds APIConnection, which is a class that can pull data from the AoE 4 API """
 
 import math
+from time import sleep
 
 import requests
 import pandas as pd
@@ -56,6 +57,8 @@ class APIConnection:
             df_page = pd.DataFrame(data=data_json["items"])
 
             df_results = pd.concat([df_results, df_page], ignore_index=True)
+            sleep(0.075)
+            
 
         # For some reason there are duplicates, maybe games finish as I'm pulling data?
         df_results = df_results.drop_duplicates(subset=["rlUserId"], ignore_index=True)
